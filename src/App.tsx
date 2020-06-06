@@ -77,9 +77,10 @@ const App: React.FC = () => {
             className="hospitals"
             key={result.id}
           >
-            <p>Operational Status: {result.business_status}</p>
+            
             <p>Hospital Name: {result.name}</p>
             <p>Hospital address: {result.vicinity}</p>
+            <p>Operational Status: {result.business_status}</p>
           </div>
         ))
       }
