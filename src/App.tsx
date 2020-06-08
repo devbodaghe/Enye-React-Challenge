@@ -1,9 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
 
-
-
-
 const key:string = process.env.REACT_APP_API_KEY!;
 
 const App: React.FC = () => {
