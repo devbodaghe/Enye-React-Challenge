@@ -1,15 +1,10 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
 
-const key:string = "AIzaSyDMbJoOSv1cbnHZ2mWOcjIUj4r4GyGF1Pg";
+const key:string = process.env.REACT_APP_API_KEY!;
+ const dblink:string = "https://enye-bfbc2.firebaseio.com/search.json"
+ const proxyuri:string = "https://secure-dusk-66741.herokuapp.com/"
 
-const App: React.FC = () => {
-
-  const [latitude,setLatitude] = useState<number | undefined>(); 
-  const [longitude,setLongitude] = useState<number | undefined>(); 
-  const [hospitals, setHospitals] = useState<any []>();
-  const [address,setAddress] = useState<string | undefined>();
-  const [radius, setRadius] = useState("5000");
 
   const options = [
     {label: "5 km",value: 5000,},
@@ -17,75 +12,178 @@ const App: React.FC = () => {
     { label: "15 km", value: 15000 },
     { label: "20 km", value: 20000 }, 
   ];
-  
-  const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';  
-  const url:string = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&type=hospital&radius=${radius}&key=${key}`;
-  const URL = PROXY_URL + url
-  
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition( position => {
-        let lat = position.coords.latitude
-        setLatitude(lat)
-        let long = position.coords.longitude
-        setLongitude(long)
-        getAddress(lat,long)
-      });
-    }
-    else {
-      alert("Enable location")
-    }
-  },[])
-  const getAddress = (lat:number,long:number):void => {
-    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&sensor=false&key=${key}`)
-    .then(response => response.json())
-    .then(data => setAddress(data.results[0].formatted_address))
-  }
-  const gethospitals = ():void => {
-    fetch(URL)
-      .then(res => res.json())
-      .then(data => setHospitals(data.results))
-  }
-  return (
-    <div className="container">
-      <h1 className="heading">covid hospital locator</h1>
-      <div className="btn__container">
-        <select
-          className="radius"
-          value={radius}
-          onChange={(e) => {
-            setRadius(e.target.value);
-          }}
-        >
-          {options.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-        <button className="btn__hospital"
-          onClick={gethospitals}
-        >
-          Show Hospitals
-        </button>
-      </div>
-      {address && <p className = "user--address"> User address: {address}</p>}
-      {
-        hospitals && 
-        hospitals.map(result => (
-          <div 
-            className="hospitals"
-            key={result.id}
-          >
-            
-            <p>Hospital Name: {result.name}</p>
-            <p>Hospital address: {result.vicinity}</p>
-            <p>Operational Status: {result.business_status}</p>
-          </div>
-        ))
-      }
-    </div>
-  )
-}
+  const search = [
+    {label: "hospitals",value: "Hospital",},
+    { label: "pharmacies", value: "Pharmacy" },
+    { label: "clinics", value: "Clinic" },
+    { label: "medicalOffices", value: "MedicalOffice" }, 
+  ];
 
-export default App;
+
+  const App:React.FC = () => {
+
+    const [radius,setRadius] = useState<number>(5000);
+    const [latitude,setLatitude] = useState<number | undefined>();
+    const [longitude,setLongitude] = useState<number | undefined>();
+    const [results,setResults] = useState<any[] | undefined>();
+    const [searchTerm,setSearchTerm] = useState<string>("Hospital");
+    const [history,setHistory] = useState<any[] | undefined>();
+    const [showHistory,setShowHistory] = useState<boolean>(false);
+  
+    useEffect(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition( position => {
+          let latitude = position.coords.latitude
+          setLatitude(latitude)
+          let longitude = position.coords.longitude
+          setLongitude(longitude)
+        });
+      }
+      else {
+        alert("Enable location")
+      }
+    },[])
+  
+    const stringifyUrl = (searchTerm:string):string => {
+      if (searchTerm === "Clinic" || searchTerm === "Medicaloffice") {
+        return `https://maps.googleapis.com/maps/api/place/textsearch/json?input=${searchTerm.toLowerCase()}&inputtype=textquery&fields=formatted_address,name&locationbias=circle:${radius}@${latitude},${longitude}&key=${key}`
+      }
+      return `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&type=${searchTerm.toLowerCase()}&radius=${radius}&key=${key}`;
+    }
+  
+    const saveDB = () => {
+      fetch(dblink, {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          searchTerm,
+          radius,
+          latitude,
+          longitude,
+          results,
+          timeStamp : Date()
+        })
+      })
+    }
+  
+    const getResults = () => {
+      const url:string = stringifyUrl(searchTerm)
+      console.log(url)
+      console.log(searchTerm)
+      fetch(proxyuri+url)
+        .then(res => res.json())
+        .then(data => {
+          setResults(data.results)
+          setShowHistory(false)
+        })
+        .then(() => saveDB())
+        .catch(() => alert("error occurred, try again"))
+    }
+  
+    const getHistory = () => {
+      fetch(dblink)
+        .then(res => res.json())
+        .then(data => {
+          const fetchedHistory = []
+          for (let key in data) {
+            fetchedHistory.push({
+              id:key,
+              ...data[key]
+            })
+          }
+          setHistory(fetchedHistory.reverse());
+          setShowHistory(true)
+        })
+        .catch(() => alert("error occurred, try again"))
+    }
+  
+    const show = (display: string) => {
+      if(display === "history") {
+        return (
+          <div className="row">
+            {history && history.map(r => (
+              <div 
+                className="row display"
+                key={r.id}
+              >
+                <span className="main__results">User searched for {r.searchTerm} at {r.timeStamp}</span>
+              </div>
+            ))}
+          </div>
+        )
+      }
+      return (
+        <div className="row">
+          {results && results.map(r => (
+            <div 
+              className="row display"
+              key={r.id}
+            >
+              <span className="main__results">{searchTerm} Name: {r.name}</span>
+              {r.business_status ? <span className="main__results">Operational Status: {r.business_status}</span> : null}
+              {r.vicinity ? <span className="main__results">{searchTerm} Address: {r.vicinity}</span> : null}
+              {r.formatted_address ? <span className="main__results">{searchTerm} Address: {r.formatted_address}</span> : null}
+            </div>
+          ))}
+      </div>
+      )
+    }
+  
+    return (
+      <>
+        <header className="header">
+          <div className="header__text">
+            <h1 className="header__primary">
+              Hospital Locator
+            </h1>
+            <span className="header__secondary">Locate Nearby Hospitals Close to Your Location</span>
+            <a className="header__btn" href="#search">Give it a try</a>
+          </div>
+        </header>
+        <main className="main" id="search">
+          <div className="row margin--b">
+            <h2 className="main__row--text">Select Search Radius</h2>
+            <select 
+              className="main__row--radius"
+              onChange = {(e) => setRadius(+e.target.value)}
+            >
+              {options.map(option => (
+                <option key={option.label} 
+                value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            <select 
+              className="main__row--radius"
+              onChange = {(e)=> {
+                setSearchTerm(e.target.value) 
+                setResults(undefined)
+              }}
+            >
+              {search.map(option => (
+                <option key={option.label} 
+                value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            <button 
+              className="main__btn--search"
+              onClick={getResults}
+            >
+              Search
+            </button>
+            <button 
+              className="main__btn--search"
+              onClick={getHistory}
+            >
+              History
+            </button>
+          </div>
+          { showHistory ? show("history") : show("results") }
+        </main>
+      </>
+    )
+  }
+  
+  export default App;
+  
