@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
 
-const key:string = process.env.REACT_APP_API_KEY!;
+const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
  const dblink:string = "https://enye-bfbc2.firebaseio.com/search.json"
  const proxyuri:string = "https://secure-dusk-66741.herokuapp.com/"
 //  const proxy2:string = "https://cors-anywhere.herokuapp.com/"
