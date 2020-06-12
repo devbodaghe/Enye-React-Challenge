@@ -3,7 +3,12 @@
   margin: 0;
   padding: 0; 
 }
-
+.header__primary{
+  text-align: center;
+}
+.header__secondary{
+  text-align: center;
+}
 .container {
   max-width: 1140px;
   margin: 0 auto;
@@ -29,7 +34,24 @@
   margin-right: 2rem;
   outline: none;
 }
-
+.main__row--radius{
+  display: inline-block;
+  /* padding: .5rem; */
+  width: 14rem;
+  border-radius: 4px;
+  background-color: #fff;
+  margin-right: .25rem;
+  margin-left: .25rem;
+  outline: none; 
+}
+.main__btn--search{
+  display: inline-block;
+  padding: .5rem;
+  border-radius: 4px;
+  border: 1px solid #fff;
+  margin-right: .25rem;
+  margin-left: .25rem;
+}
 .btn__hospital {
   display: inline-block;
   padding: .5rem;
@@ -43,8 +65,15 @@
 .btn__hospital:hover{
   cursor: pointer;
 }
+.row_display{
+  border: 1px solid #ccc;
+  background-color: #eee;
+  padding: 1rem;
+  border-radius: 5px;
+}
 
 .user--address {
+  text-align: center;
   margin-bottom: 2rem;
   font-size: .9rem;
   font-weight: 350;

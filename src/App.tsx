@@ -1,10 +1,10 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
 
-const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
+const key:string = process.env.REACT_APP_API_KEY!;
  const dblink:string = "https://enye-bfbc2.firebaseio.com/search.json"
  const proxyuri:string = "https://secure-dusk-66741.herokuapp.com/"
-
+//  const proxy2:string = "https://cors-anywhere.herokuapp.com/"
 
   const options = [
     {label: "5 km",value: 5000,},
@@ -13,10 +13,10 @@ const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
     { label: "20 km", value: 20000 }, 
   ];
   const search = [
-    {label: "hospitals",value: "Hospital",},
-    { label: "pharmacies", value: "Pharmacy" },
-    { label: "clinics", value: "Clinic" },
-    { label: "medicalOffices", value: "MedicalOffice" }, 
+    {label: "Hospitals",value: "Hospital",},
+    { label: "Pharmacies", value: "Pharmacy" },
+    { label: "Clinics", value: "Clinic" },
+    { label: "Medical Offices", value: "MedicalOffice" }, 
   ];
 
 
@@ -29,6 +29,8 @@ const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
     const [searchTerm,setSearchTerm] = useState<string>("Hospital");
     const [history,setHistory] = useState<any[] | undefined>();
     const [showHistory,setShowHistory] = useState<boolean>(false);
+    const [address,setAddress] = useState<string | undefined>();
+
   
     useEffect(() => {
       if (navigator.geolocation) {
@@ -37,13 +39,18 @@ const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
           setLatitude(latitude)
           let longitude = position.coords.longitude
           setLongitude(longitude)
+          getAddress(latitude,longitude)
         });
       }
       else {
         alert("Enable location")
       }
     },[])
-  
+    const getAddress = (lat:number,long:number):void => {
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&sensor=false&key=${key}`)
+      .then(response => response.json())
+      .then(data => setAddress(data.results[0].formatted_address))
+    }
     const stringifyUrl = (searchTerm:string):string => {
       if (searchTerm === "Clinic" || searchTerm === "Medicaloffice") {
         return `https://maps.googleapis.com/maps/api/place/textsearch/json?input=${searchTerm.toLowerCase()}&inputtype=textquery&fields=formatted_address,name&locationbias=circle:${radius}@${latitude},${longitude}&key=${key}`
@@ -105,10 +112,10 @@ const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
           <div className="row">
             {history && history.map(r => (
               <div 
-                className="row display"
+                className="row_display"
                 key={r.id}
               >
-                <span className="main__results">User searched for {r.searchTerm} at {r.timeStamp}</span>
+                <p className="main__results">User searched for {r.searchTerm} at {r.timeStamp}</p>
               </div>
             ))}
           </div>
@@ -118,13 +125,13 @@ const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
         <div className="row">
           {results && results.map(r => (
             <div 
-              className="row display"
+              className="row_display"
               key={r.id}
             >
-              <span className="main__results">{searchTerm} Name: {r.name}</span>
-              {r.business_status ? <span className="main__results">Operational Status: {r.business_status}</span> : null}
-              {r.vicinity ? <span className="main__results">{searchTerm} Address: {r.vicinity}</span> : null}
-              {r.formatted_address ? <span className="main__results">{searchTerm} Address: {r.formatted_address}</span> : null}
+              <p className="main__results">{searchTerm} Name: {r.name}</p>
+              {r.business_status ? <p className="main__results">Operational Status: {r.business_status}</p> : null}
+              {r.vicinity ? <p className="main__results">{searchTerm} Address: {r.vicinity}</p> : null}
+              {r.formatted_address ? <p className="main__results">{searchTerm} Address: {r.formatted_address}</p> : null}
             </div>
           ))}
       </div>
@@ -138,9 +145,12 @@ const key:string ="AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
             <h1 className="header__primary">
               Hospital Locator
             </h1>
-            <span className="header__secondary">Locate Nearby Hospitals Close to Your Location</span>
+            <p className="header__secondary">Locate Nearby Medical Institutions Close to Your Location</p>
+            </div>
+              {address && <p className = "user--address"> User address: {address}</p>}
+            {/* <div>
             <a className="header__btn" href="#search">Give it a try</a>
-          </div>
+          </div> */}
         </header>
         <main className="main" id="search">
           <div className="row margin--b">
