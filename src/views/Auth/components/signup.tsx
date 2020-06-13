@@ -60,7 +60,12 @@ const SignUp = () => {
                 console.log(error.message);
                 alert(error.message);
             });
+        
         })
+        .catch(error => {
+            console.log(error.message);
+            alert(error.message);
+        });
 
     }
     return (
