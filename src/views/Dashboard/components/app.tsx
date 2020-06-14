@@ -19,8 +19,12 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
     { label: "Medical Offices", value: "MedicalOffice" }, 
   ];
 
+  type Props = {
+    userID:string ,
+    userName:string
+  }
 
-  const App:React.FC = () => {
+  const App:React.FC <Props> = (props) => {
 
     const [radius,setRadius] = useState<number>(5000);
     const [latitude,setLatitude] = useState<number | undefined>();
@@ -66,6 +70,7 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
         },
         body: JSON.stringify({
           searchTerm,
+          userID:props.userID,
           radius,
           latitude,
           longitude,
@@ -95,10 +100,12 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
         .then(data => {
           const fetchedHistory = []
           for (let key in data) {
-            fetchedHistory.push({
-              id:key,
-              ...data[key]
-            })
+            if(data[key].userID === props.userID){
+              fetchedHistory.push({
+                id:key,
+                ...data[key]
+              })
+            }
           }
           setHistory(fetchedHistory.reverse());
           setShowHistory(true)
@@ -112,10 +119,11 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
           <div className="row">
             {history && history.map(r => (
               <div 
+
                 className="row_display"
                 key={r.id}
               >
-                <p className="main__results">User searched for {r.searchTerm} at {r.timeStamp}</p>
+                <p className="main__results">You searched for {r.searchTerm} at {r.timeStamp}</p>
               </div>
             ))}
           </div>

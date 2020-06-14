@@ -5,7 +5,8 @@ import "firebase/firestore";
 import App from "./app"
 
 const Dashboard = () => {
-    const [userName, setUserName] = useState();
+    const [userName, setUserName] = useState("");
+    const [userID , setUserID] = useState("");
     const history = useHistory();
 
     const handleClick = (event: any) => {
@@ -28,6 +29,7 @@ const Dashboard = () => {
             .then(res => {
                 const user = res.data();
                 if (user) {
+                    setUserID(firebase.auth().currentUser!.uid)
                     setUserName(user['username'])
                 }
             })
@@ -39,7 +41,7 @@ const Dashboard = () => {
             <h2>Welcome to Dashboard!</h2>
             <h3>{userName}</h3>
             <button onClick={handleClick}>Logout</button>
-            <App />
+            <App userID={userID} userName={userName}/>
         </div>
     );
 }
