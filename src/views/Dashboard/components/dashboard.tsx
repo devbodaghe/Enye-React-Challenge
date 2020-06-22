@@ -2,7 +2,9 @@ import React, {useState, useEffect} from "react";
 import { useHistory } from "react-router-dom";
 import firebase from "../../../firebase";
 import "firebase/firestore";
+import './app.css'
 import App from "./app"
+import {Button} from '@material-ui/core'
 
 const Dashboard = () => {
     const [userName, setUserName] = useState("");
@@ -36,12 +38,15 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div style={{textAlign: 'center'}}>
-            <h1>Dashboard</h1>
-            <h2>Welcome to Dashboard!</h2>
-            <h3>{userName}</h3>
-            <button onClick={handleClick}>Logout</button>
+        <div >
+            <Button className = 'logout' variant = "outlined" onClick={handleClick}>Logout</Button>
+            <div className = "dashboard">
+            <h1>ENYE FINDER </h1>
+            {/* <h2>Welcome {userName.toUpperCase()}</h2> */}
+            {/* <h3>{userName}</h3> */}
             <App userID={userID} userName={userName}/>
+
+            </div>
         </div>
     );
 }
