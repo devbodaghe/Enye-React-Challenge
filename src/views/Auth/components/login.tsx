@@ -41,7 +41,7 @@ const Login = () => {
             console.log(error, 'error');
         });
 
-    }, []);
+    }, );
 
     const setUserProfile = async () => {
         if (await isUserExists()) {

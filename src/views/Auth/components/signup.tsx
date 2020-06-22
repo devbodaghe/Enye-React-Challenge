@@ -5,7 +5,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import { AuthContext } from "../../../AuthProvider";
 import '../.././Dashboard/components/app.css'
-import {Button, Typography, Input} from '@material-ui/core';
+import {Button, Input} from '@material-ui/core';
 
 
 interface FormItems {
