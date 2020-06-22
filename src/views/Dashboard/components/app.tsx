@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import './app.css';
-import {Button, Select} from '@material-ui/core';
+import {Button} from '@material-ui/core';
 
 const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
  const dblink:string = "https://enye-bfbc2.firebaseio.com/search.json"
