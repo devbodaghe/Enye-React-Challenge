@@ -4,6 +4,9 @@ import firebase from "../../../firebase";
 import "firebase/auth";
 import "firebase/firestore";
 import { AuthContext } from "../../../AuthProvider";
+import {Button, Typography, Input} from '@material-ui/core';
+import '../.././Dashboard/components/app.css'
+
 
 interface UserData {
     email: string;
@@ -145,20 +148,22 @@ const Login = () => {
     }
 
     return (
-        <div style={{textAlign: 'center'}}>
-            <h1>Login</h1>
+        <div className = "login">
+            <h1>ENYE COHORT IV CHALLENGE</h1>
+            <p > In this COVID world that we live in, it is important that people can easily access medical assistance if need be. </p>
+            <p>With that in mind, the goal of this challenge is to build an application that can locate all the hospitals within a given area.</p>
             <form onSubmit={handleSubmit}>
-                <input type="text" name="email" value={values.email} placeholder="Enter your Email" onChange={handleChange} /><br /><br />
-                <input type="password" name="password" value={values.password} placeholder="Enter your Password" onChange={handleChange} /><br /><br />
+               <Typography> <Input type="text" name="email" value={values.email} placeholder="Enter your Email" onChange={handleChange} /><br /><br /></Typography>
+                <Input type="password" name="password" value={values.password} placeholder="Enter your Password" onChange={handleChange} /><br /><br />
                 <button>Login</button>
                 <p>Not logged in yet?</p>
-                <button onClick={handleClick}>SignUp</button> <br/><br/>
+                <Button variant = "outlined" onClick={handleClick}>SignUp</Button> <br/><br/>
             </form>
-
+                
                 <p>Social SignUp</p>
-                <button onClick={() => handleSocialClick("Facebook")}>SignIn with Facebook</button><br/><br/>
-                <button onClick={() => handleSocialClick("Google")}>SignIn with Google</button><br/><br/>
-                <button onClick={() => handleSocialClick("Twitter")}>SignIn with Twitter</button><br/><br/>
+                <Button variant = "outlined" onClick={() => handleSocialClick("Facebook")}>SignIn with Facebook</Button><br/><br/>
+                <Button variant = "outlined" onClick={() => handleSocialClick("Google")}>SignIn with Google</Button><br/><br/>
+                <Button variant = "outlined" onClick={() => handleSocialClick("Twitter")}>SignIn with Twitter</Button><br/><br/>
         </div>
     );
 }

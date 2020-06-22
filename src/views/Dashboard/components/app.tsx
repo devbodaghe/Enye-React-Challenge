@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
-// import './App.css';
+import './app.css';
+import {Button, Select} from '@material-ui/core';
 
 const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
  const dblink:string = "https://enye-bfbc2.firebaseio.com/search.json"
@@ -82,8 +83,8 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
   
     const getResults = () => {
       const url:string = stringifyUrl(searchTerm)
-      console.log(url)
-      console.log(searchTerm)
+      // console.log(url)
+      // console.log(searchTerm)
       fetch(proxyuri+url)
         .then(res => res.json())
         .then(data => {
@@ -150,12 +151,12 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
       <>
         <header className="header">
           <div className="header__text">
-            <h1 className="header__primary">
+            <h1 >
               Hospital Locator
             </h1>
-            <p className="header__secondary">Locate Nearby Medical Institutions Close to Your Location</p>
+            <p >Locate Nearby Medical Institutions Close to Your Location</p>
             </div>
-              {address && <p className = "user--address"> User address: {address}</p>}
+              {address && <p > User address: {address}</p>}
             {/* <div>
             <a className="header__btn" href="#search">Give it a try</a>
           </div> */}
@@ -184,20 +185,23 @@ const key:string = "AIzaSyDLBm-g5esokD5x2NLshJ-Io5lCqK_nrtM";
                 value={option.value}>{option.label}</option>
               ))}
             </select>
-            <button 
+            <Button  
               className="main__btn--search"
               onClick={getResults}
+              variant = "outlined"
             >
               Search
-            </button>
-            <button 
+            </Button>
+            <Button 
+              variant = "outlined"
               className="main__btn--search"
               onClick={getHistory}
             >
               History
-            </button>
+            </Button>
+            { showHistory ? show("history") : show("results") }
           </div>
-          { showHistory ? show("history") : show("results") }
+          
         </main>
       </>
     )

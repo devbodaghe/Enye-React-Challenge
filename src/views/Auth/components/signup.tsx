@@ -4,6 +4,9 @@ import firebase from "../../../firebase";
 import "firebase/auth";
 import "firebase/firestore";
 import { AuthContext } from "../../../AuthProvider";
+import '../.././Dashboard/components/app.css'
+import {Button, Typography, Input} from '@material-ui/core';
+
 
 interface FormItems {
     username: string;
@@ -69,16 +72,16 @@ const SignUp = () => {
 
     }
     return (
-        <div style={{textAlign: 'center'}}>
+        <div  className = "signup">
             <h1>Sign Up</h1>
             <form onSubmit={handleSubmit}>
-                <input type="text" name="username" placeholder="Username" onChange={handleChange} /><br /><br />
-                <input type="text" name="phone" placeholder="Phone" onChange={handleChange}/><br /><br />
-                <input type="text" name="email" placeholder="Enter your Email" onChange={handleChange}/><br /><br />
-                <input type="password" name="password" placeholder="Enter your Password" onChange={handleChange}/><br /><br />
-                <button type="submit">Sign Up</button>
+                <Input type="text" name="username" placeholder="Username" onChange={handleChange} /><br /><br />
+                <Input type="text" name="phone" placeholder="Phone" onChange={handleChange}/><br /><br />
+                <Input type="text" name="email" placeholder="Enter your Email" onChange={handleChange}/><br /><br />
+                <Input type="password" name="password" placeholder="Enter your Password" onChange={handleChange}/><br /><br />
+                <Button variant = "outlined" type="submit">Sign Up</Button>
                 <p>Already have account?</p>
-                <button onClick={handleClick}>Login</button>
+                <Button variant = "outlined" onClick={handleClick}>Login</Button>
             </form>
         </div>
     );
